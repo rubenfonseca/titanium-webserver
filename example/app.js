@@ -12,14 +12,16 @@ var label = Ti.UI.createLabel();
 win.add(label);
 win.open();
 
-// TODO: write your module tests here
 var webserver = require('matt.webserver');
 
 var server = webserver.startServer({
 	port:12345,
 	filePath: Ti.Filesystem.tempDirectory,
 	requestCallback: function(e) {
-		Ti.API.info(e);
+    Ti.API.log("###################### NEW REQ ############");
+    Ti.API.log(e);
+    Ti.API.log("###########################################");
+
 		var passed_test_count = 0;
 
 		if(e.post !== undefined) {
@@ -60,7 +62,7 @@ var server = webserver.startServer({
 					Ti.API.info('Test 5 - FAILED');
 				}
 
-				if(e.post.test === undefined) {
+				if(e.post == undefined || e.get.test === undefined) {
 					Ti.API.info('Test 6 - POST data is not in the GET data.');
 					passed_test_count++;
 				} else {
@@ -77,22 +79,25 @@ var server = webserver.startServer({
 		if(e.files !== undefined) {
 			Ti.API.info('FILE data tests -----------------------------------------');
 
-			if(typeof e.files === "array") {
+			if(typeof e.files === "object") {
 				Ti.API.info('Test 7 - Files posted via MULTI-PART FORM DATA are returned to JS land correctly');
 				passed_test_count++;
 
-				if(e.files.length < 2) {
-					Ti.API.info("WARNING - This test is inadaquit, please post at least 2 files");
-				}
+				// if(e.files.length < 2) {
+				// 	Ti.API.info("WARNING - This test is inadaquit, please post at least 2 files");
+				// }
 
-				for(i=0; i<= e.files.length; i++) {
-					if(typeof e.files[i] === "string") {
+        for(var name in e.files) if(e.files.hasOwnProperty(name)) {
+          var file = e.files[name];
+
+          if(file != null && file.size != null && file.path != null) {
 						Ti.API.info('Test 8 - File path returned to JS land correctly');
-						passed_test_count++;
-					} else {
-						Ti.API.info('Test 8 - FAILED');
-					}
-				}
+            passed_test_count++;
+          } else {
+            Ti.API.info('Test 8 - FAILED');
+          }
+        }
+
 			} else {
 				Ti.API.info("Test 7 - FAILED");
 			}

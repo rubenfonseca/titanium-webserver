@@ -28,6 +28,12 @@
 		24DE9E1211C5FE74003F90F6 /* MattWebserverModuleAssets.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24DE9E1011C5FE74003F90F6 /* MattWebserverModuleAssets.mm */; };
 		3E623107157009B2002FFA40 /* MyHTTPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E623105157009B2002FFA40 /* MyHTTPConnection.h */; };
 		3E623108157009B2002FFA40 /* MyHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E623106157009B2002FFA40 /* MyHTTPConnection.m */; };
+		3E9E7EA615754D3F00CB8F65 /* MParserHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E9E7EA415754D3F00CB8F65 /* MParserHeader.h */; };
+		3E9E7EA715754D3F00CB8F65 /* MParserHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9E7EA515754D3F00CB8F65 /* MParserHeader.m */; };
+		3EBD3ABF157539F200FC2B61 /* MultipartParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EBD3ABD157539F200FC2B61 /* MultipartParser.h */; };
+		3EBD3AC0157539F200FC2B61 /* MultipartReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EBD3ABE157539F200FC2B61 /* MultipartReader.h */; };
+		3EBD3AC315753A1100FC2B61 /* MParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EBD3AC115753A1100FC2B61 /* MParser.h */; };
+		3EBD3AC415753A1100FC2B61 /* MParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EBD3AC215753A1100FC2B61 /* MParser.m */; };
 		AA747D9F0F9514B9006C5449 /* MattWebserver_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* MattWebserver_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		C9E2361315407FEB00B6F484 /* MattWebserverCallbackProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = C9E2361115407FEB00B6F484 /* MattWebserverCallbackProxy.h */; };
@@ -95,6 +101,12 @@
 		24DE9E1011C5FE74003F90F6 /* MattWebserverModuleAssets.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MattWebserverModuleAssets.mm; path = Classes/MattWebserverModuleAssets.mm; sourceTree = "<group>"; };
 		3E623105157009B2002FFA40 /* MyHTTPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyHTTPConnection.h; path = Classes/MyHTTPConnection.h; sourceTree = "<group>"; };
 		3E623106157009B2002FFA40 /* MyHTTPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyHTTPConnection.m; path = Classes/MyHTTPConnection.m; sourceTree = "<group>"; };
+		3E9E7EA415754D3F00CB8F65 /* MParserHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MParserHeader.h; path = Classes/MParserHeader.h; sourceTree = SOURCE_ROOT; };
+		3E9E7EA515754D3F00CB8F65 /* MParserHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MParserHeader.m; path = Classes/MParserHeader.m; sourceTree = SOURCE_ROOT; };
+		3EBD3ABD157539F200FC2B61 /* MultipartParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MultipartParser.h; sourceTree = "<group>"; };
+		3EBD3ABE157539F200FC2B61 /* MultipartReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp.preprocessed; fileEncoding = 4; path = MultipartReader.h; sourceTree = "<group>"; };
+		3EBD3AC115753A1100FC2B61 /* MParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MParser.h; path = Classes/MParser.h; sourceTree = SOURCE_ROOT; };
+		3EBD3AC215753A1100FC2B61 /* MParser.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = MParser.m; path = Classes/MParser.m; sourceTree = SOURCE_ROOT; };
 		AA747D9E0F9514B9006C5449 /* MattWebserver_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MattWebserver_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C9E2361115407FEB00B6F484 /* MattWebserverCallbackProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MattWebserverCallbackProxy.h; path = Classes/MattWebserverCallbackProxy.h; sourceTree = "<group>"; };
@@ -217,9 +229,23 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		3EBD3ABB1575398D00FC2B61 /* Multipart */ = {
+			isa = PBXGroup;
+			children = (
+				3EBD3ABD157539F200FC2B61 /* MultipartParser.h */,
+				3EBD3ABE157539F200FC2B61 /* MultipartReader.h */,
+				3EBD3AC115753A1100FC2B61 /* MParser.h */,
+				3EBD3AC215753A1100FC2B61 /* MParser.m */,
+				3E9E7EA415754D3F00CB8F65 /* MParserHeader.h */,
+				3E9E7EA515754D3F00CB8F65 /* MParserHeader.m */,
+			);
+			name = Multipart;
+			sourceTree = "<group>";
+		};
 		C9E635FB1539C29C00BADBC8 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				3EBD3ABB1575398D00FC2B61 /* Multipart */,
 				C9E635FC1539C29C00BADBC8 /* Categories */,
 				C9E636031539C29C00BADBC8 /* HTTPAuthenticationRequest.h */,
 				C9E636041539C29C00BADBC8 /* HTTPAuthenticationRequest.m */,
@@ -340,6 +366,10 @@
 				C9E636631539C29C00BADBC8 /* DDTTYLogger.h in Headers */,
 				C9E2361315407FEB00B6F484 /* MattWebserverCallbackProxy.h in Headers */,
 				3E623107157009B2002FFA40 /* MyHTTPConnection.h in Headers */,
+				3EBD3ABF157539F200FC2B61 /* MultipartParser.h in Headers */,
+				3EBD3AC0157539F200FC2B61 /* MultipartReader.h in Headers */,
+				3EBD3AC315753A1100FC2B61 /* MParser.h in Headers */,
+				3E9E7EA615754D3F00CB8F65 /* MParserHeader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +466,8 @@
 				C9E636641539C29C00BADBC8 /* DDTTYLogger.m in Sources */,
 				C9E2361415407FEB00B6F484 /* MattWebserverCallbackProxy.m in Sources */,
 				3E623108157009B2002FFA40 /* MyHTTPConnection.m in Sources */,
+				3EBD3AC415753A1100FC2B61 /* MParser.m in Sources */,
+				3E9E7EA715754D3F00CB8F65 /* MParserHeader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +547,7 @@
 				DSTROOT = /tmp/MattWebserver.dst;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = MattWebserver_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "TI_VERSION=$(TI_VERSION)";
@@ -605,6 +638,7 @@
 				DSTROOT = /tmp/MattWebserver.dst;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = MattWebserver_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "TI_VERSION=$(TI_VERSION)";
