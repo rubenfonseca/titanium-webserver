@@ -115,9 +115,10 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 -(id)startServer:(id)args
 {
     ENSURE_SINGLE_ARG(args,NSDictionary);
+	
+	MattWebserverCallbackProxy *proxy = [[MattWebserverCallbackProxy alloc] _initWithPageContext:[self executionContext]];
+	[proxy _initWithProperties:args];
     
-    MattWebserverCallbackProxy *proxy = [[MattWebserverCallbackProxy alloc] initWithProxy: [self executionContext] args:args];
-
 	// Configure our logging framework.
 	// To keep things simple and fast, we're just going to log to the Xcode console.
 	[DDLog addLogger:[DDTTYLogger sharedInstance]];
@@ -134,16 +135,16 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	// However, for easy testing you may want force a certain port so you can just hit the refresh button.
 	[httpServer setPort:12345];
     
-    NSLog(@"Server started on %@:%i", [self getIPAddress], 12345);
+  NSLog(@"Server started on %@:%i", [self getIPAddress], 12345);
     
-    // We're going to extend the base HTTPConnection class with our MyHTTPConnection class.
+  // We're going to extend the base HTTPConnection class with our MyHTTPConnection class.
 	// This allows us to do all kinds of customizations.
 	[httpServer setConnectionClass:[MyHTTPConnection class]];
 	
 	// Serve files from our embedded Web folder
 	//NSString *webPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask ,YES );
-    NSString *webPath = [paths objectAtIndex:0];
+  NSArray *paths = NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask ,YES );
+  NSString *webPath = [paths objectAtIndex:0];
 	NSLog(@"Setting document root: %@", webPath);
 	[httpServer setDocumentRoot:webPath];
 	
@@ -154,7 +155,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 		DDLogError(@"Error starting HTTP Server: %@", error);
 	}
     
-    return [proxy autorelease];
+  return [proxy autorelease];
 }
 
 @end

@@ -9,45 +9,54 @@
 #import "MattWebserverCallbackProxy.h"
 
 @implementation MattWebserverCallbackProxy
-static id _instance;
+
+static MattWebserverCallbackProxy* _instance;
 
 +(MattWebserverCallbackProxy *) sharedInstance
 {
     return _instance;
 }
 
--(void)_destroy
-{
-    RELEASE_TO_NIL(errorCallback);
-	RELEASE_TO_NIL(requestCallback);
-	[super _destroy];
-}
-
 -(void)dealloc
 {
-    [super dealloc];
+  RELEASE_TO_NIL(errorCallback);
+	RELEASE_TO_NIL(requestCallback);
+	_instance = nil;
+	
+	[super dealloc];
 }
 
--(id)initWithProxy:(id<TiEvaluator>)context args:(NSDictionary*)args
-{
-    _instance = self;
-    requestCallback = [[args objectForKey:@"requestCallback"] retain];
-    errorCallback = [[args objectForKey:@"errorCallback"] retain];
-
-	return _instance;
+-(void)_initWithProperties:(NSDictionary *)properties {
+	[super _initWithProperties:properties];
+	
+  _instance = self;
+  requestCallback = [[properties objectForKey:@"requestCallback"] retain];
+  errorCallback = [[properties objectForKey:@"errorCallback"] retain];
 }
 
 -(NSString*)requestStarted:(NSDictionary*)event
 {    
-    if ([super _hasListeners:@"requestStarted"])
-    {
-        [super fireEvent:@"requestStarted" withObject:event];
-    }
-    
     if(requestCallback)
     {
-        return [requestCallback call:[NSArray arrayWithObject:event] thisObject:nil];
-        
+			NSCondition *condition = [[NSCondition alloc] init];
+			[condition lock];
+			
+			__block NSString *ret = nil;
+			[[requestCallback context] invokeBlockOnThread:^{
+				ret = [[requestCallback call:[NSArray arrayWithObject:event] thisObject:self] copy];
+				
+				[condition lock];
+				[condition signal];
+				[condition unlock];
+			}];
+			
+			while(ret == nil)
+				[condition wait];
+			[condition unlock];
+			
+			[condition release];
+			
+			return [ret autorelease];
     } else {
         return @"";
     }

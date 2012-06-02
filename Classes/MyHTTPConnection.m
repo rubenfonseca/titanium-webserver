@@ -1,3 +1,6 @@
+#import "TiUtils.h"
+#import "TiBlob.h"
+
 #import "MyHTTPConnection.h"
 #import "HTTPMessage.h"
 #import "HTTPServer.h"
@@ -11,22 +14,28 @@
 #import "DDNumber.h"
 #import "HTTPLogging.h"
 
+#import "MParser.h"
+#import "MParserHeader.h"
+
 // Log levels : off, error, warn, info, verbose
 // Other flags: trace
-static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
-
-
-/**
- * All we have to do is override appropriate methods in HTTPConnection.
-**/
+static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 
 @implementation MyHTTPConnection
+
+-(void)dealloc {
+	RELEASE_TO_NIL(parser);
+	RELEASE_TO_NIL(uploadedFiles);
+	RELEASE_TO_NIL(multipartParams);
+	RELEASE_TO_NIL(currentFile);
+	
+	[super dealloc];
+}
 
 - (BOOL)isBrowseable:(NSString *)path
 {
 	// Override me to provide custom configuration...
 	// You can configure it for the entire server, or based on the current request
-	
 	return YES;
 }
 
@@ -36,271 +45,243 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
  **/
 - (NSString *)createBrowseableIndex:(NSString *)path
 {
-    NSLog(@"Path is %@", path);
-    NSArray *array = [[NSFileManager defaultManager] directoryContentsAtPath:path];
-    
-    NSMutableString *outdata = [NSMutableString new];
+	NSLog(@"Path is %@", path);
+	NSArray *array = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+	
+	NSMutableString *outdata = [[NSMutableString alloc] init];
 	[outdata appendString:@"<html><head>"];
-    [outdata appendString:@"<style>html {background-color:#eeeeee} body { background-color:#FFFFFF; font-family:Tahoma,Arial,Helvetica,sans-serif; font-size:18x; margin-left:15%; margin-right:15%; border:3px groove #006600; padding:15px; } </style>"];
-    [outdata appendString:@"</head><body>"];
-    [outdata appendString:@"<bq>The following files are hosted live from the iPhone's Docs folder.</bq>"];
-    [outdata appendString:@"<p>"];
-    for (NSString *fname in array)
-    {
-        NSDictionary *fileDict = [[NSFileManager defaultManager] fileAttributesAtPath:[path stringByAppendingPathComponent:fname] traverseLink:NO];
+	[outdata appendString:@"<style>html {background-color:#eeeeee} body { background-color:#FFFFFF; font-family:Tahoma,Arial,Helvetica,sans-serif; font-size:18x; margin-left:15%; margin-right:15%; border:3px groove #006600; padding:15px; } </style>"];
+	[outdata appendString:@"</head><body>"];
+	[outdata appendString:@"<bq>The following files are hosted live from the iPhone's Docs folder.</bq>"];
+	[outdata appendString:@"<p>"];
+	for (NSString *fname in array)
+	{
+		NSDictionary *fileDict = [[NSFileManager defaultManager] attributesOfItemAtPath:[path stringByAppendingPathComponent:fname] error:nil];
 		//NSLog(@"fileDict: %@", fileDict);
 		if ([[fileDict objectForKey:NSFileType] isEqualToString: @"NSFileTypeDirectory"]) fname = [fname stringByAppendingString:@"/"];
 		[outdata appendFormat:@"<a href=\"%@\">%@</a>		(%8.1f Kb)<br />\n", fname, fname, [[fileDict objectForKey:NSFileSize] floatValue] / 1024];
-    }
-    [outdata appendString:@"</p>"];
-	
-	if ([self supportsPOST:path withSize:0])
-	{
-		[outdata appendString:@"<form action=\"\" method=\"post\" enctype=\"multipart/form-data\" name=\"form1\" id=\"form1\">"];
-		[outdata appendString:@"<label>upload file"];
-		[outdata appendString:@"<input type=\"file\" name=\"file\" id=\"file\" />"];
-		[outdata appendString:@"</label>"];
-		[outdata appendString:@"<label>"];
-		[outdata appendString:@"<input type=\"submit\" name=\"button\" id=\"button\" value=\"Submit\" />"];
-		[outdata appendString:@"</label>"];
-		[outdata appendString:@"</form>"];
 	}
+	[outdata appendString:@"</p>"];
+	
+	[outdata appendString:@"<form action=\"\" method=\"post\" enctype=\"multipart/form-data\" name=\"form1\" id=\"form1\">"];
+	[outdata appendString:@"<label>upload file"];
+	[outdata appendString:@"<input type=\"file\" name=\"file\" id=\"file\" />"];
+	[outdata appendString:@"</label>"];
+	[outdata appendString:@"<label>"];
+	[outdata appendString:@"<input type=\"submit\" name=\"button\" id=\"button\" value=\"Submit\" />"];
+	[outdata appendString:@"</label>"];
+	[outdata appendString:@"</form>"];
 	
 	[outdata appendString:@"</body></html>"];
-    
+	
 	//NSLog(@"outData: %@", outdata);
-    return [outdata autorelease];
+	return [outdata autorelease];
 }
-
-
 
 - (BOOL)supportsMethod:(NSString *)method atPath:(NSString *)path
 {
 	HTTPLogTrace();
 	
 	// Add support for POST
-	
 	if ([method isEqualToString:@"POST"])
 	{
-        // Let's be extra cautious, and make sure the upload isn't 5 gigs
-			
-        return requestContentLength < 500000;
+		// Let's be extra cautious, and make sure the upload isn't 5 gigs
+		return requestContentLength < 500000;
 	}
 	
 	return [super supportsMethod:method atPath:path];
 }
 
-/**
- * Returns whether or not the server will accept POSTs.
- * That is, whether the server will accept uploaded data for the given URI.
- **/
-- (BOOL)supportsPOST:(NSString *)path withSize:(UInt64)contentLength
-{
-    //	NSLog(@"POST:%@", path);
+-(BOOL)expectsMultipartRequest:(NSString *)contentType paramsIndex:(NSInteger)index {
+	NSArray *params = [[contentType substringFromIndex:index + 1] componentsSeparatedByString:@";"];
 	
-	dataStartIndex = 0;
-	multipartData = [[NSMutableArray alloc] init];
-	postHeaderOK = FALSE;
+	for(NSString *param in params) {
+		index = [param rangeOfString:@"="].location;
+		if((NSNotFound == index) || index >= param.length - 1) {
+			continue;
+		}
+		
+		NSString *paramName = [param substringWithRange:NSMakeRange(1, index-1)];
+		NSString *paramValue = [param substringFromIndex:index + 1];
+		
+		if([paramName isEqualToString:@"boundary"]) {
+			// let's separate the boundary from content-type, to make it more handy to handle
+			[request setHeaderField:@"boundary" value:paramValue];
+		}
+	}
 	
+	if(nil == [request headerField:@"boundary"])
+		return NO;
+	else
+		return YES;
+}
+
+-(BOOL)expectsFormDataRequest {
 	return YES;
 }
 
-
-/**
- * This method is called to get a response for a request.
- * You may return any object that adopts the HTTPResponse protocol.
- * The HTTPServer comes with two such classes: HTTPFileResponse and HTTPDataResponse.
- * HTTPFileResponse is a wrapper for an NSFileHandle object, and is the preferred way to send a file response.
- * HTTPDataResopnse is a wrapper for an NSData object, and may be used to send a custom response.
- **/
-- (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path
-{    
-	//NSLog(@"httpResponseForURI: method:%@ path:%@", method, path);
+- (BOOL)expectsRequestBodyFromMethod:(NSString *)method atPath:(NSString *)path {
+	HTTPLogTrace();
 	
-	NSData *requestData = [request body];
-    NSString* filename = @"";
+	isMultipart = NO;
+	isFormData = NO;
 	
-	NSString *requestStr = [[[NSString alloc] initWithData:requestData encoding:NSASCIIStringEncoding] autorelease];
-	//NSLog(@"\n=== Request ====================\n%@\n================================", requestStr);
-	//printf (" \n\n requestContentLength = %llu  \n", requestContentLength);
-	if (requestContentLength > 0 && [multipartData count] >= 2)  // Process POST data
-	{
-        //NSLog(@"We got something to process!!!");
-		//NSLog(@"processing post data: %@", requestContentLength);
-        
-        //NSLog(@"We have this many = %@", [multipartData count]);
-		
-		if ([multipartData count] < 2) return nil;
-		
-		NSString* postInfo = [[NSString alloc] initWithBytes:[[multipartData objectAtIndex:1] bytes]
-													  length:[[multipartData objectAtIndex:1] length]
-													encoding:NSUTF8StringEncoding];
-        		
-		NSArray* postInfoComponents = [postInfo componentsSeparatedByString:@"; filename="];
-		postInfoComponents = [[postInfoComponents lastObject] componentsSeparatedByString:@"\""];
-		postInfoComponents = [[postInfoComponents objectAtIndex:1] componentsSeparatedByString:@"\\"];
-		filename = [postInfoComponents lastObject];
-        
-        //NSLog(@"filename = %@", filename);
-		
-		if (![filename isEqualToString:@""]) //this makes sure we did not submitted upload form without selecting file
-		{
-			UInt16 separatorBytes = 0x0A0D;
-			NSMutableData* separatorData = [NSMutableData dataWithBytes:&separatorBytes length:2];
-			[separatorData appendData:[multipartData objectAtIndex:0]];
-			int l = [separatorData length];
-			int count = 2;	//number of times the separator shows up at the end of file data
-			
-			NSFileHandle* dataToTrim = [multipartData lastObject];
-			//NSLog(@"data: %@", dataToTrim);
-			
-			//NSLog(@"NewFileUploaded");
-			[[NSNotificationCenter defaultCenter] postNotificationName:@"NewFileUploaded" object:nil];
+	if([method isEqualToString:@"POST"]) {
+		NSString *contentType = [request headerField:@"Content-Type"];
+		if([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
+			isFormData = YES;
+			return [self expectsFormDataRequest];
 		}
 		
-		for (int n = 1; n < [multipartData count] - 1; n++)
-			NSLog(@"%@", [[NSString alloc] initWithBytes:[[multipartData objectAtIndex:n] bytes] length:[[multipartData objectAtIndex:n] length] encoding:NSUTF8StringEncoding]);
+		NSInteger paramsSeparator = [contentType rangeOfString:@";"].location;
+		if(NSNotFound == paramsSeparator) {
+			return NO;
+		}
+		if(paramsSeparator >= contentType.length - 1) {
+			return NO;
+		}
 		
-		[postInfo release];
-		[multipartData release];
-		requestContentLength = 0;
+		NSString *type = [contentType substringToIndex:paramsSeparator];
+		if([type isEqualToString:@"multipart/form-data"]) {
+			isMultipart = YES;
+			return [self expectsMultipartRequest:contentType paramsIndex:paramsSeparator];
+		}
 		
+		return NO;
 	}
 	
-	NSString *filePath = [self filePathForURI:path];
+	return [super expectsRequestBodyFromMethod:method atPath:path];
+}
+
+-(NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path {
+	NSMutableDictionary *event = [NSMutableDictionary dictionary];
 	
+	// store method
+	[event setValue:method forKey:@"method"];
+	
+	// store path
+	[event setValue:path forKey:@"path"];
+	
+	// store headers
+	[event setValue:[request allHeaderFields] forKey:@"headers"];
+	
+	// get GET params
+	NSDictionary *get = [self parseGetParams];
+	[event setValue:get forKey:@"get"];
+	
+	// get POST params
+	if(isMultipart) {
+		// Transform all NSData into Strings
+		NSMutableDictionary *post = [NSMutableDictionary dictionary];
+		for(NSString *name in multipartParams) {
+			NSData *data = [multipartParams valueForKey:name];
+			NSString *dataString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+			[post setValue:dataString forKey:name];
+		}
+		[event setValue:post forKey:@"post"];
+		
+		// Transform all files into TiBlobs
+		NSMutableDictionary *files = [NSMutableDictionary dictionary];
+		for(NSString *fileName in uploadedFiles) {
+			NSString *filePath = [uploadedFiles valueForKey:fileName];
+			
+			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[MattWebserverCallbackProxy sharedInstance] executionContext]];
+			[blob initWithFile:filePath];
+			[files setValue:blob forKey:fileName];
+			[blob autorelease];
+		}
+		[event setValue:files forKey:@"files"];
+		
+	} else {
+		NSString *postStr = nil;
+		NSData *postData = [request body];
+		if(postData) {
+			postStr = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
+		}
+			
+		if(isFormData) {
+			[event setValue:[self parseParams:postStr] forKey:@"post"];
+		} else {
+			[event setValue:postStr forKey:@"body"];
+		}
+		
+		[postStr release];
+	}
+	
+	// Static files never hit the callback
+	NSString *filePath = [self filePathForURI:path];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:filePath])
 	{
 		return [[[HTTPFileResponse alloc] initWithFilePath:filePath forConnection:self] autorelease];;
 	}
 	else
 	{
-        NSArray *cleanPath = [path componentsSeparatedByString:@"?"];
-        NSData *browseData;
-        NSDictionary* POST = [NSDictionary dictionaryWithObjectsAndKeys:nil];
-        NSDictionary* file = [NSDictionary dictionaryWithObjectsAndKeys:nil];
-                
-        if ([method isEqualToString:@"POST"])
-        {
-            NSLog(@"now we postin");
-        }
-        
-        if (![filename isEqualToString:@""])
-        {
-            file = [NSDictionary dictionaryWithObjectsAndKeys:filename,@"filename",nil];
-        }
-                
-        NSDictionary* GET = [cleanPath count] > 1 ?[self parseParams:[cleanPath objectAtIndex: 1]] : [NSDictionary dictionaryWithObjectsAndKeys:nil];
-        
-        @synchronized(self) {
-            NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:[cleanPath objectAtIndex: 0],@"request",method,@"method",GET,@"get",POST,@"post",file,@"file",nil];
-            //NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"value1", @"key1", @"value2", @"key2", nil];
-
-            NSString* responce = [[MattWebserverCallbackProxy sharedInstance] requestStarted: event];
-            
-            browseData = [responce dataUsingEncoding:NSUTF8StringEncoding];
-        }
-        return [[[HTTPDataResponse alloc] initWithData:browseData] autorelease];
-        
-//        if ([path isEqualToString:@"/list"])
-//		{
-//            NSString *folder = [config documentRoot];
-//            if ([self isBrowseable:folder])
-//            {
-//                browseData = [[self createBrowseableIndex:folder] dataUsingEncoding:NSUTF8StringEncoding];
-//                return [[[HTTPDataResponse alloc] initWithData:browseData] autorelease];
-//            }
-//        } else if ([path isEqualToString:@"/upload"])
-//        {
-//            
-//            
-//        }
+		NSData *browseData;
+		@synchronized(self) {
+			NSString* res = [[MattWebserverCallbackProxy sharedInstance] requestStarted: event];
+			browseData = [res dataUsingEncoding:NSUTF8StringEncoding];
+		}
+		return [[[HTTPDataResponse alloc] initWithData:browseData] autorelease];
 	}
-	
-	return nil;
 }
 
+-(void)prepareForBodyWithSize:(UInt64)contentLength {
+	HTTPLogTrace();
+	
+	NSString *boundary = [request headerField:@"boundary"];
+	
+	parser = [[MParser alloc] initWithBoundary:boundary];
+	parser.delegate = self;
+	
+	uploadedFiles = [[NSMutableDictionary alloc] init];
+	multipartParams = [[NSMutableDictionary alloc] init];
+}
 
-/**
- * This method is called to handle data read from a POST.
- * The given data is part of the POST body.
- **/
-- (void)processBodyData:(NSData *)postDataChunk
-{
-	// Override me to do something useful with a POST.
-	// If the post is small, such as a simple form, you may want to simply append the data to the request.
-	// If the post is big, such as a file upload, you may want to store the file to disk.
-	// 
-	// Remember: In order to support LARGE POST uploads, the data is read in chunks.
-	// This prevents a 50 MB upload from being stored in RAM.
-	// The size of the chunks are limited by the POST_CHUNKSIZE definition.
-	// Therefore, this method may be called multiple times for the same POST request.
+-(void)processBodyData:(NSData *)postDataChunk {
+	HTTPLogTrace();
+	
+	// size_t size = 
+	[parser addData:postDataChunk];
+}
+
+#pragma mark Multipart Form Data Parser Delegate
+-(void)processStartOfPartWithHeader:(MParserHeader *)header {
+	// check content disposition to find out filename
+	NSDictionary *disposition = [header.params objectForKey:@"Content-Disposition"];
+	NSString *fileName = [[disposition objectForKey:@"filename"] lastPathComponent];
+	NSString *name = [disposition objectForKey:@"name"];
+	
+	if(nil == fileName || [fileName isEqualToString:@""]) {
+		// Abort if we don't even have a name
+		if(!name) { return; }
 		
-	if (!postHeaderOK)
-	{
-		UInt16 separatorBytes = 0x0A0D;
-		NSData* separatorData = [NSData dataWithBytes:&separatorBytes length:2];
+		[multipartParams setValue:[NSMutableData data] forKey:name];
+	} else {
+		TiFile *tempFile = [TiUtils createTempFile:fileName];
+		currentFile = [[NSFileHandle fileHandleForWritingAtPath:tempFile.path] retain];
+		[uploadedFiles setValue:tempFile.path forKey:name];
+	}
+}
+
+-(void)processContent:(NSData *)data WithHeader:(MParserHeader *)header {
+	NSDictionary *disposition = [header.params objectForKey:@"Content-Disposition"];
+	NSString *name = [disposition objectForKey:@"name"];
+	
+	if(currentFile) {
+		[currentFile writeData:data];
+	} else if(name) {
+		NSMutableData *d = (NSMutableData *)[multipartParams valueForKey:name];
+		NSAssert(d != nil, @"Param should exist");
 		
-		int l = [separatorData length];
-        
-		for (int i = 0; i < [postDataChunk length] - l; i++)
-		{
-			NSRange searchRange = {i, l};
-            
-			if ([[postDataChunk subdataWithRange:searchRange] isEqualToData:separatorData])
-			{
-				NSRange newDataRange = {dataStartIndex, i - dataStartIndex};
-				dataStartIndex = i + l;
-				i += l - 1;
-				NSData *newData = [postDataChunk subdataWithRange:newDataRange];
-                
-				if ([newData length])
-				{
-                    NSLog(@"uploding data...");
-					[multipartData addObject:newData];
-				}
-				else
-				{
-					postHeaderOK = TRUE;
-                    
-                    NSString* postInfo = [[NSString alloc] initWithBytes:[[multipartData objectAtIndex:1] bytes] length:[[multipartData objectAtIndex:1] length] encoding:NSUTF8StringEncoding];
-                    
-					NSArray* postInfoComponents = [postInfo componentsSeparatedByString:@"; filename="];
-                    //NSLog(@"lastObject = %@", [postInfoComponents lastObject]);
-                    //NSLog(@"lastObject = %@", [postInfoComponents objectAtIndex:1]);
-					postInfoComponents = [[postInfoComponents lastObject] componentsSeparatedByString:@"\""];
-					postInfoComponents = [[postInfoComponents objectAtIndex:1] componentsSeparatedByString:@"\\"];
-                    NSArray *paths = NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask ,YES );
-                    NSString *filePath = [paths objectAtIndex:0];
-                    
-					NSString* filename = [filePath stringByAppendingPathComponent:[postInfoComponents lastObject]];
-					NSRange fileDataRange = {dataStartIndex, [postDataChunk length] - dataStartIndex};
-					
-					[[NSFileManager defaultManager] createFileAtPath:filename contents:[postDataChunk subdataWithRange:fileDataRange] attributes:nil];
-					NSFileHandle *file = [[NSFileHandle fileHandleForUpdatingAtPath:filename] retain];
-                    
-					if (file)
-					{
-						[file seekToEndOfFile];
-						[multipartData addObject:file];
-					}
-					
-					[postInfo release];
-					
-					//[self saveFile];
-                    break;
-				}
-			}
-		}
+		[d appendData:data];
+		[multipartParams setValue:d forKey:name];
 	}
-	else
-	{
-        
-        //NSArray *paths = NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask ,YES );
-        //NSString *docPath = [paths objectAtIndex:0];
-        //[postDataChunk writeToFile:@"file.pdf" atomically:NO];
-		[(NSFileHandle*)[multipartData lastObject] writeData:postDataChunk];
-	}
+}
+
+-(void)processEndOfPartWithHeader:(MParserHeader *)header {
+	[currentFile closeFile];
+	[currentFile release];
+	currentFile = nil;
 }
 
 @end

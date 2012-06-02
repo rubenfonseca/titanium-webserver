@@ -17,6 +17,6 @@
 }
 
 -(NSString*)requestStarted:(NSDictionary*) event;
--(id)initWithProxy:(id<TiEvaluator>)context args:(NSDictionary*)args;
 + (MattWebserverCallbackProxy *) sharedInstance;
+
 @end
