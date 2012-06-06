@@ -34,14 +34,14 @@ static MattWebserverCallbackProxy* _instance;
   errorCallback = [[properties objectForKey:@"errorCallback"] retain];
 }
 
--(NSString*)requestStarted:(NSDictionary*)event
+-(id)requestStarted:(NSDictionary*)event
 {    
     if(requestCallback)
     {
 			NSCondition *condition = [[NSCondition alloc] init];
 			[condition lock];
 			
-			__block NSString *ret = nil;
+			__block id ret = nil;
 			[[requestCallback context] invokeBlockOnThread:^{
 				ret = [[requestCallback call:[NSArray arrayWithObject:event] thisObject:self] copy];
 				

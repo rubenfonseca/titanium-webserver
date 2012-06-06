@@ -16,7 +16,7 @@
 	KrollCallback *requestCallback;
 }
 
--(NSString*)requestStarted:(NSDictionary*) event;
+-(id)requestStarted:(NSDictionary*) event;
 + (MattWebserverCallbackProxy *) sharedInstance;
 
 @end

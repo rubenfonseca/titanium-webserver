@@ -18,10 +18,6 @@ var server = webserver.startServer({
 	port:12345,
 	filePath: Ti.Filesystem.tempDirectory,
 	requestCallback: function(e) {
-    Ti.API.log("###################### NEW REQ ############");
-    Ti.API.log(e);
-    Ti.API.log("###########################################");
-
 		var passed_test_count = 0;
 
 		if(e.post !== undefined) {
@@ -83,10 +79,6 @@ var server = webserver.startServer({
 				Ti.API.info('Test 7 - Files posted via MULTI-PART FORM DATA are returned to JS land correctly');
 				passed_test_count++;
 
-				// if(e.files.length < 2) {
-				// 	Ti.API.info("WARNING - This test is inadaquit, please post at least 2 files");
-				// }
-
         for(var name in e.files) if(e.files.hasOwnProperty(name)) {
           var file = e.files[name];
 
@@ -111,6 +103,25 @@ var server = webserver.startServer({
 
 		var string = "This is the text / HTML that should display in the users browser";
 		return string;
+    
+    // Custom body example
+    // var obj = {
+    //   body: '{foo:"bar"}',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // };
+    // return obj;
+    
+    // File response example
+    // var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "KS_nav_ui.png");
+    // var obj = {
+    //   headers: {
+    //     'Content-Type': 'image/png'
+    //   },
+    //   file: file
+    // };
+    // return obj;
 	}
 });
 

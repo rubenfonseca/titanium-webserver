@@ -2,6 +2,8 @@
 #import "TiBlob.h"
 
 #import "MyHTTPConnection.h"
+#import "MyHTTPDataResponse.h"
+#import "MyHTTPFileResponse.h"
 #import "HTTPMessage.h"
 #import "HTTPServer.h"
 
@@ -216,12 +218,8 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 	}
 	else
 	{
-		NSData *browseData;
-		@synchronized(self) {
-			NSString* res = [[MattWebserverCallbackProxy sharedInstance] requestStarted: event];
-			browseData = [res dataUsingEncoding:NSUTF8StringEncoding];
-		}
-		return [[[HTTPDataResponse alloc] initWithData:browseData] autorelease];
+		id res = [[MattWebserverCallbackProxy sharedInstance] requestStarted:event];
+		return [self buildResponseFromObject:res];
 	}
 }
 
@@ -282,6 +280,39 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 	[currentFile closeFile];
 	[currentFile release];
 	currentFile = nil;
+}
+
+-(NSObject<HTTPResponse> *)buildResponseFromObject:(id)obj {
+	if([obj isKindOfClass:[NSString class]]) {
+		NSData *data = [(NSString *)obj dataUsingEncoding:NSUTF8StringEncoding];
+		return [[[HTTPDataResponse alloc] initWithData:data] autorelease];
+	}
+	
+	if([obj isKindOfClass:[NSDictionary class]]) {
+		NSDictionary *data = (NSDictionary *)obj;
+		
+		if([data valueForKey:@"body"]) {
+			NSString *body= [data valueForKey:@"body"];
+			NSData *bodyData = [body dataUsingEncoding:NSUTF8StringEncoding];
+			
+			MyHTTPDataResponse *res = [[[MyHTTPDataResponse alloc] initWithData:bodyData] autorelease];
+			res.headers = [data valueForKey:@"headers"];
+			return res;
+		}
+		else if ([data valueForKey:@"file"]) {
+			TiBlob *blob = (TiBlob *)[data valueForKey:@"file"];
+			
+			MyHTTPFileResponse *res = [[[MyHTTPFileResponse alloc] initWithFilePath:blob.path forConnection:self] autorelease];
+			res.headers = [data valueForKey:@"headers"];
+			return res;
+		} else {
+			NSLog(@"Warning!! Response object must include body or file");
+			return nil;
+		}
+	}
+	
+	NSLog(@"Warning!!! Response wasn't either a String nor a Object");
+	return nil;
 }
 
 @end

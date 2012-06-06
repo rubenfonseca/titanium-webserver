@@ -26,6 +26,10 @@
 		24DD6CFA1134B3F500162E58 /* MattWebserverModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 24DD6CF81134B3F500162E58 /* MattWebserverModule.m */; };
 		24DE9E1111C5FE74003F90F6 /* MattWebserverModuleAssets.h in Headers */ = {isa = PBXBuildFile; fileRef = 24DE9E0F11C5FE74003F90F6 /* MattWebserverModuleAssets.h */; };
 		24DE9E1211C5FE74003F90F6 /* MattWebserverModuleAssets.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24DE9E1011C5FE74003F90F6 /* MattWebserverModuleAssets.mm */; };
+		3E038343157F90610057069F /* MyHTTPDataResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E038341157F90610057069F /* MyHTTPDataResponse.h */; };
+		3E038344157F90610057069F /* MyHTTPDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E038342157F90610057069F /* MyHTTPDataResponse.m */; };
+		3E038347157F90980057069F /* MyHTTPFileResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E038345157F90980057069F /* MyHTTPFileResponse.h */; };
+		3E038348157F90980057069F /* MyHTTPFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E038346157F90980057069F /* MyHTTPFileResponse.m */; };
 		3E623107157009B2002FFA40 /* MyHTTPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E623105157009B2002FFA40 /* MyHTTPConnection.h */; };
 		3E623108157009B2002FFA40 /* MyHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E623106157009B2002FFA40 /* MyHTTPConnection.m */; };
 		3E9E7EA615754D3F00CB8F65 /* MParserHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E9E7EA415754D3F00CB8F65 /* MParserHeader.h */; };
@@ -99,6 +103,10 @@
 		24DD6D1B1134B66800162E58 /* titanium.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = titanium.xcconfig; sourceTree = "<group>"; };
 		24DE9E0F11C5FE74003F90F6 /* MattWebserverModuleAssets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MattWebserverModuleAssets.h; path = Classes/MattWebserverModuleAssets.h; sourceTree = "<group>"; };
 		24DE9E1011C5FE74003F90F6 /* MattWebserverModuleAssets.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MattWebserverModuleAssets.mm; path = Classes/MattWebserverModuleAssets.mm; sourceTree = "<group>"; };
+		3E038341157F90610057069F /* MyHTTPDataResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyHTTPDataResponse.h; path = Classes/MyHTTPDataResponse.h; sourceTree = "<group>"; };
+		3E038342157F90610057069F /* MyHTTPDataResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyHTTPDataResponse.m; path = Classes/MyHTTPDataResponse.m; sourceTree = "<group>"; };
+		3E038345157F90980057069F /* MyHTTPFileResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyHTTPFileResponse.h; path = Classes/MyHTTPFileResponse.h; sourceTree = "<group>"; };
+		3E038346157F90980057069F /* MyHTTPFileResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyHTTPFileResponse.m; path = Classes/MyHTTPFileResponse.m; sourceTree = "<group>"; };
 		3E623105157009B2002FFA40 /* MyHTTPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MyHTTPConnection.h; path = Classes/MyHTTPConnection.h; sourceTree = "<group>"; };
 		3E623106157009B2002FFA40 /* MyHTTPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MyHTTPConnection.m; path = Classes/MyHTTPConnection.m; sourceTree = "<group>"; };
 		3E9E7EA415754D3F00CB8F65 /* MParserHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MParserHeader.h; path = Classes/MParserHeader.h; sourceTree = SOURCE_ROOT; };
@@ -216,6 +224,10 @@
 				24DE9E1011C5FE74003F90F6 /* MattWebserverModuleAssets.mm */,
 				24DD6CF71134B3F500162E58 /* MattWebserverModule.h */,
 				24DD6CF81134B3F500162E58 /* MattWebserverModule.m */,
+				3E038345157F90980057069F /* MyHTTPFileResponse.h */,
+				3E038346157F90980057069F /* MyHTTPFileResponse.m */,
+				3E038341157F90610057069F /* MyHTTPDataResponse.h */,
+				3E038342157F90610057069F /* MyHTTPDataResponse.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -370,6 +382,8 @@
 				3EBD3AC0157539F200FC2B61 /* MultipartReader.h in Headers */,
 				3EBD3AC315753A1100FC2B61 /* MParser.h in Headers */,
 				3E9E7EA615754D3F00CB8F65 /* MParserHeader.h in Headers */,
+				3E038343157F90610057069F /* MyHTTPDataResponse.h in Headers */,
+				3E038347157F90980057069F /* MyHTTPFileResponse.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +482,8 @@
 				3E623108157009B2002FFA40 /* MyHTTPConnection.m in Sources */,
 				3EBD3AC415753A1100FC2B61 /* MParser.m in Sources */,
 				3E9E7EA715754D3F00CB8F65 /* MParserHeader.m in Sources */,
+				3E038344157F90610057069F /* MyHTTPDataResponse.m in Sources */,
+				3E038348157F90980057069F /* MyHTTPFileResponse.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
