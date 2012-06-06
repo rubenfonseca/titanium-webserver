@@ -189,19 +189,23 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 		[event setValue:files forKey:@"files"];
 		
 	} else {
-		NSString *postStr = nil;
-		NSData *postData = [request body];
-		if(postData) {
-			postStr = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
-		}
-			
 		if(isFormData) {
-			[event setValue:[self parseParams:postStr] forKey:@"post"];
+			NSData *postData = [request body];
+			if(postData) {
+				NSString *postStr = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
+				[event setValue:[self parseParams:postStr] forKey:@"post"];
+				[postStr autorelease];
+			}
 		} else {
-			[event setValue:postStr forKey:@"body"];
+			// Send the raw body :D
+			NSString *mime = [[request allHeaderFields] valueForKey:@"Content-Type"];
+			if(!mime) { mime = @"application/octet-stream"; }
+				
+			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[MattWebserverCallbackProxy sharedInstance] executionContext]];
+			[blob initWithData:[request body] mimetype:mime];
+			[event setValue:blob forKey:@"body"];
+			[blob autorelease];
 		}
-		
-		[postStr release];
 	}
 	
 	// Static files never hit the callback
@@ -222,18 +226,23 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 	
 	NSString *boundary = [request headerField:@"boundary"];
 	
-	parser = [[MParser alloc] initWithBoundary:boundary];
-	parser.delegate = self;
+	if(boundary) {
+		parser = [[MParser alloc] initWithBoundary:boundary];
+		parser.delegate = self;
 	
-	uploadedFiles = [[NSMutableDictionary alloc] init];
-	multipartParams = [[NSMutableDictionary alloc] init];
+		uploadedFiles = [[NSMutableDictionary alloc] init];
+		multipartParams = [[NSMutableDictionary alloc] init];
+	}
 }
 
 -(void)processBodyData:(NSData *)postDataChunk {
 	HTTPLogTrace();
 	
-	// size_t size = 
-	[parser addData:postDataChunk];
+	if(parser) {
+		[parser addData:postDataChunk];
+	} else {
+		[request appendData:postDataChunk];
+	}
 }
 
 #pragma mark Multipart Form Data Parser Delegate
