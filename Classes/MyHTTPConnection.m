@@ -84,14 +84,8 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 {
 	HTTPLogTrace();
 	
-	// Add support for POST
-	if ([method isEqualToString:@"POST"])
-	{
-		// Let's be extra cautious, and make sure the upload isn't 5 gigs
-		return requestContentLength < 500000;
-	}
-	
-	return [super supportsMethod:method atPath:path];
+	// Let's be extra cautious, and make sure the upload isn't 5 gigs
+	return requestContentLength < 10000000;
 }
 
 -(BOOL)expectsMultipartRequest:(NSString *)contentType paramsIndex:(NSInteger)index {
