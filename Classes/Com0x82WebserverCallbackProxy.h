@@ -7,7 +7,7 @@
 #import "TiProxy.h"
 
 
-@interface MattWebserverCallbackProxy : TiProxy
+@interface Com0x82WebserverCallbackProxy : TiProxy
 {
 
 @private
@@ -17,6 +17,6 @@
 }
 
 -(id)requestStarted:(NSDictionary*) event;
-+ (MattWebserverCallbackProxy *) sharedInstance;
++ (Com0x82WebserverCallbackProxy *) sharedInstance;
 
 @end

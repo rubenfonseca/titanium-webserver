@@ -12,7 +12,7 @@ var label = Ti.UI.createLabel();
 win.add(label);
 win.open();
 
-var webserver = require('matt.webserver');
+var webserver = require('com.0x82.webserver');
 
 var server = webserver.startServer({
 	port:12345,

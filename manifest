@@ -4,15 +4,14 @@
 #
 version: 0.1
 apiversion: 2
-description: My module
-author: Your Name
-license: Specify your license
-copyright: Copyright (c) 2012 by Your Company
-
+description: Webserver
+author: Matt Apperson, Ruben Fonseca
+license: MIT
+copyright: Copyright (c) 2012 by Ruben Fonseca
 
 # these should not be edited
 name: webserver
-moduleid: matt.webserver
-guid: fa7f492c-cd23-4832-ae51-ef9eb7ad2b7b
+moduleid: com.0x82.webserver
+guid: fa7f492c-cd23-4832-ae51-ef9eb7ad2b7
 platform: iphone
 minsdk: 2.0.0

@@ -11,7 +11,7 @@
 #import "HTTPDataResponse.h"
 #import "HTTPFileResponse.h"
 
-#import "MattWebserverCallbackProxy.h"
+#import "Com0x82WebserverCallbackProxy.h"
 
 #import "DDNumber.h"
 #import "HTTPLogging.h"
@@ -181,7 +181,7 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 		for(NSString *fileName in uploadedFiles) {
 			NSString *filePath = [uploadedFiles valueForKey:fileName];
 			
-			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[MattWebserverCallbackProxy sharedInstance] executionContext]];
+			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[Com0x82WebserverCallbackProxy sharedInstance] executionContext]];
 			[blob initWithFile:filePath];
 			[files setValue:blob forKey:fileName];
 			[blob autorelease];
@@ -201,7 +201,7 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 			NSString *mime = [[request allHeaderFields] valueForKey:@"Content-Type"];
 			if(!mime) { mime = @"application/octet-stream"; }
 				
-			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[MattWebserverCallbackProxy sharedInstance] executionContext]];
+			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[Com0x82WebserverCallbackProxy sharedInstance] executionContext]];
 			[blob initWithData:[request body] mimetype:mime];
 			[event setValue:blob forKey:@"body"];
 			[blob autorelease];
@@ -216,7 +216,7 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 	}
 	else
 	{
-		id res = [[MattWebserverCallbackProxy sharedInstance] requestStarted:event];
+		id res = [[Com0x82WebserverCallbackProxy sharedInstance] requestStarted:event];
 		return [self buildResponseFromObject:res];
 	}
 }

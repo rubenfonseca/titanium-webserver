@@ -4,13 +4,13 @@
  * Appcelerator Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc.
  * and licensed under the Apache Public License (version 2)
  */
-#import "MattWebserverModule.h"
+#import "Com0x82WebserverModule.h"
 #import "TiBase.h"
 #import "TiHost.h"
 #import "TiUtils.h"
 #import "HTTPServer.h"
 #import "MyHTTPConnection.h"
-#import "MattWebserverCallbackProxy.h"
+#import "Com0x82WebserverCallbackProxy.h"
 
 #import "DDLog.h"
 #import "DDTTYLogger.h"
@@ -20,7 +20,7 @@
 // Log levels: off, error, warn, info, verbose
 static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
-@implementation MattWebserverModule
+@implementation Com0x82WebserverModule
 
 - (NSString *)getIPAddress
 {
@@ -116,7 +116,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     ENSURE_SINGLE_ARG(args,NSDictionary);
 	
-	MattWebserverCallbackProxy *proxy = [[MattWebserverCallbackProxy alloc] _initWithPageContext:[self executionContext]];
+	Com0x82WebserverCallbackProxy *proxy = [[Com0x82WebserverCallbackProxy alloc] _initWithPageContext:[self executionContext]];
 	[proxy _initWithProperties:args];
     
 	// Configure our logging framework.

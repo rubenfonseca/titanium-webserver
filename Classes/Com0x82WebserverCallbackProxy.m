@@ -6,13 +6,13 @@
  */
 #import "TiUtils.h"
 #import "TiProxy.h"
-#import "MattWebserverCallbackProxy.h"
+#import "Com0x82WebserverCallbackProxy.h"
 
-@implementation MattWebserverCallbackProxy
+@implementation Com0x82WebserverCallbackProxy
 
-static MattWebserverCallbackProxy* _instance;
+static Com0x82WebserverCallbackProxy* _instance;
 
-+(MattWebserverCallbackProxy *) sharedInstance
++(Com0x82WebserverCallbackProxy *) sharedInstance
 {
     return _instance;
 }

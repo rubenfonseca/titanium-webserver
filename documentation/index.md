@@ -168,7 +168,7 @@ Example:
 
     requestCallback: function(e) {
       return {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: "{foo:'bar'}"
       }
     }
@@ -181,7 +181,7 @@ Example:
 
     requestCallback: function(e) {
       return {
-        headers: { 'Content-Type': 'image/png' },
+        headers: { 'Content-Type': 'image/png' },
         file: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "KS_nav_ui.png")
       }
     }
@@ -201,6 +201,6 @@ Please see the example director, since it contains several examples of all the A
 
 Matt Apperson
 
-Rúben Fonseca
+Ruben Fonseca
 
 (c) 2012

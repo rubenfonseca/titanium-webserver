@@ -10,7 +10,7 @@
 @class iPhoneHTTPServerViewController;
 @class HTTPServer;
 
-@interface MattWebserverModule : TiModule 
+@interface Com0x82WebserverModule : TiModule 
 {
 	HTTPServer *httpServer;
 }

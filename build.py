@@ -192,7 +192,7 @@ def package_module(manifest,mf,config):
 		for doc in docs:
 			for file, html in doc.iteritems():
 				filename = string.replace(file,'.md','.html')
-				zf.writestr('%s/documentation/%s'%(modulepath,filename),html)
+				zf.writestr('%s/documentation/%s'%(modulepath,filename),html.encode('utf8'))
 	for dn in ('assets','example','platform'):
 	  if os.path.exists(dn):
 		  zip_dir(zf,dn,'%s/%s' % (modulepath,dn),['README'])
