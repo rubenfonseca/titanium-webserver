@@ -76,8 +76,10 @@ you should use to configure all aspects of the webserver instance:</p>
 
 <ul>
 <li><p><em>port</em>: [required] An integer with the port number you want to run the server. Please use
- only unprivileged ports (&gt; 1024)</p></li>
-<li><p><em>filePath</em>: [required] The document root of the web server (where static files will be served from)</p></li>
+ only unprivileged ports (&gt; 1024). Default is 12345.</p></li>
+<li><p><em>documentRoot</em>: [required] The document root of the web server (where static files will be served from).
+ The default is the Application documents directory.</p></li>
+<li><p><em>bonjour</em>: [optional] default to <code>true</code>. Enables Bonjour advertising for the webserver.</p></li>
 <li><p><em>requestCallback</em>: [required] A callback that is called for every single HTTP request to the webserver.
  The details about this callback are explained on the next section</p></li>
 </ul>
@@ -87,9 +89,9 @@ you should use to configure all aspects of the webserver instance:</p>
 <p>Example:</p>
 
 <pre><code>var webserver = require('matt.webserver');
-webserver.startServer({
+var server = webserver.startServer({
   port: 12345,
-  filePath: Ti.Filesystem.tempDirectory,
+  documentRoot: Ti.Filesystem.tempDirectory,
   requestCallback: function(e) {
     return &quot;Hello World!&quot;;
   }
@@ -211,7 +213,7 @@ should contain the following keys:</p>
 
 <pre><code>requestCallback: function(e) {
   return {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     body: &quot;{foo:'bar'}&quot;
   }
 }
@@ -227,7 +229,7 @@ should contain the following keys:</p>
 
 <pre><code>requestCallback: function(e) {
   return {
-    headers: { 'Content-Type': 'image/png' },
+    headers: { 'Content-Type': 'image/png' },
     file: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, &quot;KS_nav_ui.png&quot;)
   }
 }
@@ -248,7 +250,7 @@ argument is the same object passed to the <code>requestCallback</code> bellow.</
 
 <p>Matt Apperson</p>
 
-<p>Rúben Fonseca</p>
+<p>Ruben Fonseca</p>
 
 <p>(c) 2012</p>
     </div>

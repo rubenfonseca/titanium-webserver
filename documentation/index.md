@@ -51,9 +51,12 @@ Use this method to setup and start the server. The only argument is an object th
 you should use to configure all aspects of the webserver instance:
 
 - *port*: [required] An integer with the port number you want to run the server. Please use
-          only unprivileged ports (> 1024)
+          only unprivileged ports (> 1024). Default is 12345.
 
-- *filePath*: [required] The document root of the web server (where static files will be served from)
+- *documentRoot*: [required] The document root of the web server (where static files will be served from).
+                  The default is the Application documents directory.
+
+- *bonjour*: [optional] default to `true`. Enables Bonjour advertising for the webserver.
 
 - *requestCallback*: [required] A callback that is called for every single HTTP request to the webserver.
                      The details about this callback are explained on the next section
@@ -63,9 +66,9 @@ After this call, the server is running and should be ready to receive requests o
 Example:
 
     var webserver = require('matt.webserver');
-    webserver.startServer({
+    var server = webserver.startServer({
       port: 12345,
-      filePath: Ti.Filesystem.tempDirectory,
+      documentRoot: Ti.Filesystem.tempDirectory,
       requestCallback: function(e) {
         return "Hello World!";
       }
