@@ -14,4 +14,7 @@
 {
 	HTTPServer *httpServer;
 }
+
+-(id)startServer:(id)args;
+
 @end

@@ -1,24 +1,24 @@
-// This is a test harness for your module
-// You should do something interesting in this harness 
-// to test out the module and to provide instructions 
-// to users on how to use it by example.
-
-
 // open a single window
 var win = Ti.UI.createWindow({
 	backgroundColor:'white'
 });
-var label = Ti.UI.createLabel();
+var label = Ti.UI.createLabel({
+  text: 'Server started at',
+  top: 10,
+  textAlign: 'center'
+});
 win.add(label);
 win.open();
 
 var webserver = require('com.0x82.webserver');
-
 var server = webserver.startServer({
 	port:12345,
-	filePath: Ti.Filesystem.tempDirectory,
+  bonjour: true,
+	documentRoot: Ti.Filesystem.applicationDataDirectory,
 	requestCallback: function(e) {
 		var passed_test_count = 0;
+
+    Ti.API.warn(e);
 
 		if(e.post !== undefined) {
 			Ti.API.info('POST data tests -----------------------------------------');
@@ -113,7 +113,7 @@ var server = webserver.startServer({
     // };
     // return obj;
     
-    // File response example
+    // File custom response example
     // var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "KS_nav_ui.png");
     // var obj = {
     //   headers: {
@@ -125,6 +125,16 @@ var server = webserver.startServer({
 	}
 });
 
-server.addEventListener('requestStarted', function(e) {
-	//alert(e.request);
+var ipLabel = Ti.UI.createLabel({
+  text: "IP: " + server.ipAddress(),
+  top: 50,
+  textAlign: 'center'
+})
+win.add(ipLabel);
+
+var portLabel = Ti.UI.createLabel({
+  text: "Port: " + server.port(),
+  top: 80,
+  textAlign: 'center'
 });
+win.add(portLabel);
