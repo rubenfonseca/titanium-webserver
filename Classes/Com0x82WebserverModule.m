@@ -32,7 +32,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 // this is generated for your module, please do not change it
 -(NSString*)moduleId
 {
-	return @"matt.webserver";
+	return @"com.0x82.webserver";
 }
 
 #pragma mark Lifecycle

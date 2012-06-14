@@ -67,7 +67,7 @@ def generate_doc(config):
 	return documentation
 
 def compile_js(manifest,config):
-	js_file = os.path.join(cwd,'assets','matt.webserver.js')
+	js_file = os.path.join(cwd,'assets','com.0x82.webserver.js')
 	if not os.path.exists(js_file): return	
 
 	from compiler import Compiler
@@ -135,7 +135,7 @@ def validate_manifest():
 			if curvalue==defvalue: warn("please update the manifest key: '%s' to a non-default value" % key)
 	return manifest,path
 
-ignoreFiles = ['.DS_Store','.gitignore','libTitanium.a','titanium.jar','README','matt.webserver.js']
+ignoreFiles = ['.DS_Store','.gitignore','libTitanium.a','titanium.jar','README','com.0x82.webserver.js']
 ignoreDirs = ['.DS_Store','.svn','.git','CVSROOT']
 
 def zip_dir(zf,dir,basepath,ignore=[]):

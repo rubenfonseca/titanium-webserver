@@ -39,7 +39,7 @@ See [here](changelog.html)
 
 To access this module from JavaScript, you would do the following:
 
-	var webserver = require("matt.webserver");
+	var webserver = require("com.0x82.webserver");
 
 The webserver variable is a reference to the Module object.	
 
@@ -65,7 +65,7 @@ After this call, the server is running and should be ready to receive requests o
 
 Example:
 
-    var webserver = require('matt.webserver');
+    var webserver = require('com.0x82.webserver');
     var server = webserver.startServer({
       port: 12345,
       documentRoot: Ti.Filesystem.tempDirectory,
