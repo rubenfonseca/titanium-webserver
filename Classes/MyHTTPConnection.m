@@ -124,7 +124,7 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 	
 	if([method isEqualToString:@"POST"]) {
 		NSString *contentType = [request headerField:@"Content-Type"];
-		if([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
+		if([contentType hasPrefix:@"application/x-www-form-urlencoded"]) {
 			isFormData = YES;
 			return [self expectsFormDataRequest];
 		}

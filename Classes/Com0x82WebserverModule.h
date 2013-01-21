@@ -13,6 +13,7 @@
 @interface Com0x82WebserverModule : TiModule 
 {
 	HTTPServer *httpServer;
+	BOOL wasRunning;
 }
 
 -(id)startServer:(id)args;

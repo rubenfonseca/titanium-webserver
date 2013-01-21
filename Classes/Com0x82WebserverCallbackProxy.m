@@ -78,39 +78,38 @@ static Com0x82WebserverCallbackProxy* _instance;
 	return NUMINT(_server.port);
 }
 
-- (NSString *)getIPAddress
-{
-	NSString *address = @"error";
-	struct ifaddrs *interfaces = NULL;
-	struct ifaddrs *temp_addr = NULL;
-	int success = 0;
+-(NSString *)getIPAddress {
+	NSArray* interfaces = [NSArray arrayWithObjects:@"en0", @"en1", nil];
+	for (NSString* interface in interfaces) {
+		NSString* iface = [self getIface:interface];
+		if (iface) {
+			return iface;
+		}
+	}
+	return nil;
+}
+
+-(NSString *)getIface:(NSString *)iname {
+	struct ifaddrs* head = NULL;
+	struct ifaddrs* ifaddr = NULL;
+	getifaddrs(&head);
 	
-	// retrieve the current interfaces - returns 0 on success
-	success = getifaddrs(&interfaces);
-	if (success == 0)
-	{
-		// Loop through linked list of interfaces
-		temp_addr = interfaces;
-		while(temp_addr != NULL)
-		{
-			if(temp_addr->ifa_addr->sa_family == AF_INET)
-			{
-				// Check if interface is en0 which is the wifi connection on the iPhone
-				if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"])
-				{
-					// Get NSString from C String
-					address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-				}
-			}
+	NSString* str = nil;
+	for (ifaddr = head; ifaddr != NULL; ifaddr = ifaddr->ifa_next) {
+		if (ifaddr->ifa_addr->sa_family == AF_INET &&
+				!strcmp(ifaddr->ifa_name, [iname UTF8String])) {
 			
-			temp_addr = temp_addr->ifa_next;
+			char ipaddr[20];
+			struct sockaddr_in* addr;
+			addr = (struct sockaddr_in*)ifaddr->ifa_addr;
+			inet_ntop(addr->sin_family, &(addr->sin_addr), ipaddr, 20);
+			str = [NSString stringWithUTF8String:ipaddr];
+			break;
 		}
 	}
 	
-	// Free memory
-	freeifaddrs(interfaces);
-	
-	return address;
+	freeifaddrs(head);
+	return str;
 }
 
 @end

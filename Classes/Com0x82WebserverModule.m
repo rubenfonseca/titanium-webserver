@@ -45,6 +45,10 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	[super startup];
 	
 	NSLog(@"[INFO] %@ loaded",self);
+	
+	wasRunning = NO;
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillComeToForeground:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 -(void)shutdown:(id)sender
@@ -57,21 +61,35 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	[super shutdown:sender];
 }
 
+-(void)applicationWillResignActive:(id)notification {
+	DDLogVerbose(@"------------> background");
+	if(httpServer.isRunning) {
+		__block UIBackgroundTaskIdentifier disconnectID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+			[[UIApplication sharedApplication] endBackgroundTask:disconnectID];
+		}];
+		
+		wasRunning = YES;
+		[httpServer stop];
+	} else {
+		wasRunning = NO;
+	}
+}
+
+-(void)applicationWillComeToForeground:(id)notification {
+	DDLogVerbose(@"------------> foreground");
+	if(httpServer && wasRunning) {
+		NSError *error;
+		if(![httpServer start:&error]) {
+			DDLogError(@"Error starting HTTP Server: %@", error);
+		}
+	}
+}
+
 #pragma mark Cleanup 
 
 -(void)dealloc
 {
     [super dealloc];
-}
-
-
-#pragma mark Internal Memory Management
-
--(void)didReceiveMemoryWarning:(NSNotification*)notification
-{
-	// optionally release any resources that can be dynamically
-	// reloaded once memory is available - such as caches
-	[super didReceiveMemoryWarning:notification];
 }
 
 #pragma Public APIs
