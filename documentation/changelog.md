@@ -1,6 +1,21 @@
 # Changelog
 
-- 2012-01-21 Rúben Fonseca <fonseka@gmail.com>
+- 2013-03-20 Ruben Fonseca <fonseka@gmail.com>
+
+    * version 0.8 released
+
+    * fixed a race condition when the webserver was being shutdown and started up frequently
+
+- 2013-01-30 Rúben Fonseca <fonseka@gmail.com>
+
+    * version 0.7 released
+
+    * added a new flag to disable background code handling
+      (usefull for people that use background services like Audio or GPS)
+      
+      see documentation/index.html for the documentation (disconnectsInBackground)
+
+- 2013-01-21 Rúben Fonseca <fonseka@gmail.com>
 
     * version 0.6 released
 

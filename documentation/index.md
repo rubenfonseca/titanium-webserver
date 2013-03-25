@@ -188,6 +188,13 @@ Example:
         file: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "KS_nav_ui.png")
       }
     }
+    
+## Properties
+
+### webserver.disconnectsInBackground = true | false (default is true)
+
+If you change this flag to `false`, the webserver will not disconnect when the app goes into background.
+It could be usefull for people that use this module to provide background Audio or GPS.
 
 ## Events
 
