@@ -1,0 +1,3 @@
+[submodule "CocoaHTTPServer"]
+	path = CocoaHTTPServer
+	url = https://github.com/robbiehanson/CocoaHTTPServer
