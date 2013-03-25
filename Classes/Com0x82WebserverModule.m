@@ -46,7 +46,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	
 	NSLog(@"[INFO] %@ loaded",self);
 	
+	self.disconnectsInBackground = @(YES);
 	wasRunning = NO;
+	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillComeToForeground:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
@@ -62,7 +64,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 }
 
 -(void)applicationWillResignActive:(id)notification {
-	DDLogVerbose(@"------------> background");
+	NSLog(@"-----> applicationWillResignActive. disconnectsInBackground is %@", self.disconnectsInBackground);
+	if(![self.disconnectsInBackground boolValue]) return;
+	
 	if(httpServer.isRunning) {
 		__block UIBackgroundTaskIdentifier disconnectID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
 			[[UIApplication sharedApplication] endBackgroundTask:disconnectID];
@@ -76,7 +80,9 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 }
 
 -(void)applicationWillComeToForeground:(id)notification {
-	DDLogVerbose(@"------------> foreground");
+	NSLog(@"-----> applicationWillComeToForeground. disconnectsInBackground is %@", self.disconnectsInBackground);
+	if(![self.disconnectsInBackground boolValue]) return;
+	
 	if(httpServer && wasRunning) {
 		NSError *error;
 		if(![httpServer start:&error]) {

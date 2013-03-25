@@ -16,6 +16,8 @@
 	BOOL wasRunning;
 }
 
+@property (nonatomic, assign) NSNumber* disconnectsInBackground;
+
 -(id)startServer:(id)args;
 
 @end
