@@ -29,7 +29,10 @@ static Com0x82WebserverCallbackProxy* _instance;
 {
   RELEASE_TO_NIL(errorCallback);
 	RELEASE_TO_NIL(requestCallback);
-	_instance = nil;
+  
+  // Only remove the shared instance if we are the shared instance :)
+	if(self == _instance)
+    _instance = nil;
 	
 	[super dealloc];
 }
