@@ -11,6 +11,7 @@
 
 @implementation MyHTTPDataResponse
 @synthesize headers;
+@synthesize thisStatus;
 
 -(void)dealloc {
 	RELEASE_TO_NIL(headers);
@@ -19,6 +20,10 @@
 
 -(NSDictionary *)httpHeaders {
 	return self.headers;
+}
+
+-(NSInteger)status {
+	return thisStatus;
 }
 
 @end

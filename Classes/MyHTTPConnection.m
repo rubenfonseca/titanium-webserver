@@ -300,6 +300,7 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 			
 			MyHTTPDataResponse *res = [[[MyHTTPDataResponse alloc] initWithData:bodyData] autorelease];
 			res.headers = [data valueForKey:@"headers"];
+			res.thisStatus = [TiUtils intValue:@"status" properties:data def:200];
 			return res;
 		}
 		else if ([data valueForKey:@"file"]) {
