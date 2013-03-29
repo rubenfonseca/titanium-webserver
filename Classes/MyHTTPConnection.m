@@ -179,7 +179,8 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 		// Transform all files into TiBlobs
 		NSMutableDictionary *files = [NSMutableDictionary dictionary];
 		for(NSString *fileName in uploadedFiles) {
-			NSString *filePath = [uploadedFiles valueForKey:fileName];
+			TiFile *file = [uploadedFiles valueForKey:fileName];
+			NSString *filePath = file.path;
 			
 			TiBlob *blob = [[TiBlob alloc] _initWithPageContext:[[Com0x82WebserverCallbackProxy sharedInstance] executionContext]];
 			[blob initWithFile:filePath];
@@ -260,7 +261,7 @@ static const int httpLogLevel = HTTP_LOG_FLAG_TRACE; // | HTTP_LOG_FLAG_TRACE;
 	} else {
 		TiFile *tempFile = [TiUtils createTempFile:fileName];
 		currentFile = [[NSFileHandle fileHandleForWritingAtPath:tempFile.path] retain];
-		[uploadedFiles setValue:tempFile.path forKey:name];
+		[uploadedFiles setValue:tempFile forKey:name];
 	}
 }
 

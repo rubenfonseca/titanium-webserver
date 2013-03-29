@@ -1,5 +1,11 @@
 # Changelog
 
+- 2013-03-29 Ruben Fonseca <fonseka@gmail.com>
+
+    * version 0.9 released
+
+    * Fixed a bug with uploaded files not showing correctly (empty files).
+
 - 2013-03-20 Ruben Fonseca <fonseka@gmail.com>
 
     * version 0.8 released
