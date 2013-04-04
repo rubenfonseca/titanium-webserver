@@ -2,10 +2,10 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 0.9
+version: 0.10
 apiversion: 2
 description: Webserver
-author: Matt Apperson, Ruben Fonseca
+author: Matt Apperson, Ruben Fonseca, Shannon Hicks
 license: MIT
 copyright: Copyright (c) 2012 by Ruben Fonseca
 
