@@ -1,5 +1,17 @@
 # Changelog
 
+- 2013-04-04 Shannon Hicks <shan@iotashan.com>
+
+    * version 0.10 released
+
+    * Added the ability to specify a HTTP response code for data responses
+
+- 2013-03-29 Ruben Fonseca <fonseka@gmail.com>
+
+    * version 0.9 released
+
+    * Fixed a bug with uploaded files not showing correctly (empty files).
+
 - 2013-03-20 Ruben Fonseca <fonseka@gmail.com>
 
     * version 0.8 released

@@ -176,6 +176,18 @@ Example:
       }
     }
 
+- *status*: [optional] A valid HTTP response code. Ignored if you return a *file* response.
+
+Example:
+
+    requestCallback: function(e) {
+      return {
+        headers: { 'Content-Type': 'application/json' },
+        status: 401
+        body: "{message:'You are not authorized'}",
+      }
+    }
+
 - *file*: [required or body] A TiBlob representing an existing file to be sent to the client.
           Under the hood it uses a very efficient mechanism to load the file to the client
           without exausting all the resources.

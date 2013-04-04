@@ -11,5 +11,6 @@
 @interface MyHTTPDataResponse : HTTPDataResponse
 
 @property (nonatomic, retain) NSDictionary *headers;
+@property NSInteger thisStatus;
 
 @end
