@@ -2097,7 +2097,7 @@ static NSMutableArray *recentNonces;
 						return;
 					}
 					
-					if (![NSNumber parseString:(NSString *)contentLength intoUInt64:&requestContentLength])
+					if (![NSNumber parseString:(NSString *)contentLength intoSInt64:&requestContentLength])
 					{
 						HTTPLogWarn(@"%@[%p]: Unable to parse Content-Length header into a valid number",
 									THIS_FILE, self);
@@ -2114,7 +2114,7 @@ static NSMutableArray *recentNonces;
 					// Received Content-Length header for method not expecting an upload.
 					// This better be zero...
 					
-					if (![NSNumber parseString:(NSString *)contentLength intoUInt64:&requestContentLength])
+					if (![NSNumber parseString:(NSString *)contentLength intoSInt64:&requestContentLength])
 					{
 						HTTPLogWarn(@"%@[%p]: Unable to parse Content-Length header into a valid number",
 									THIS_FILE, self);
@@ -2154,7 +2154,7 @@ static NSMutableArray *recentNonces;
 				// Prepare for the upload
 				[self prepareForBodyWithSize:requestContentLength];
 				
-				if (requestContentLength > 0)
+				if (requestContentLength > 0 || requestContentLength == -1)
 				{
 					// Start reading the request body
 					if (requestContentLength == -1)
@@ -2220,6 +2220,7 @@ static NSMutableArray *recentNonces;
 			// We have just read in a line with the size of the chunk data, in hex, 
 			// possibly followed by a semicolon and extra parameters that can be ignored,
 			// and ending with CRLF.
+      errno = 0;
 			
 			NSString *sizeLine = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 			

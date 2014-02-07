@@ -56,7 +56,7 @@
 	NSString *ranges_boundry;
 	int rangeIndex;
 	
-	UInt64 requestContentLength;
+	SInt64 requestContentLength;
 	UInt64 requestContentLengthReceived;
 	UInt64 requestChunkSize;
 	UInt64 requestChunkSizeReceived;

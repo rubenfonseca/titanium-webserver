@@ -1,5 +1,11 @@
 # Changelog
 
+- 2014-02-07 Ruben Fonseca <fonseka@gmail.com>
+
+    * version 0.12 released
+
+    * Added method to stopServer() and change the advertised bonjour address.
+
 - 2013-04-04 Shannon Hicks <shan@iotashan.com>
 
     * version 0.10 released
@@ -24,7 +30,7 @@
 
     * added a new flag to disable background code handling
       (usefull for people that use background services like Audio or GPS)
-      
+
       see documentation/index.html for the documentation (disconnectsInBackground)
 
 - 2013-01-21 Rúben Fonseca <fonseka@gmail.com>
@@ -32,14 +38,14 @@
     * version 0.6 released
 
     * fixed a lot of bugs related to background processing and parameter handling
-    
+
     * fixed a bug with incorrect IP address reporting
-    
+
 
 - 2011-17-02 Rúben Fonseca <fonseka@gmail.com>
 
     * version 0.2 released
-    
+
     * fixed a bug when serving files that were symlinked (for instance, when
       developing using the iOS simulator)
 

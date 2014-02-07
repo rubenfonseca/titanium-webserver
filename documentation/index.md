@@ -22,14 +22,14 @@ decide to use or not use this module
       {
         var version = Titanium.Platform.version.split(".");
         var major = parseInt(version[0],10);
-    
+
         if (major >= 4)
         {
           return true;
         }
       }
       return false;
-    }  
+    }
 
 ## Changelog
 
@@ -41,7 +41,7 @@ To access this module from JavaScript, you would do the following:
 
 	var webserver = require("com.0x82.webserver");
 
-The webserver variable is a reference to the Module object.	
+The webserver variable is a reference to the Module object.
 
 ## Reference
 
@@ -57,6 +57,8 @@ you should use to configure all aspects of the webserver instance:
                   The default is the Application documents directory.
 
 - *bonjour*: [optional] default to `true`. Enables Bonjour advertising for the webserver.
+
+- *bonjourName*: [optional] defaults to local device name. Set this variable to customize the advertised Bonjour name.
 
 - *requestCallback*: [required] A callback that is called for every single HTTP request to the webserver.
                      The details about this callback are explained on the next section
@@ -74,8 +76,22 @@ Example:
       }
     });
 
-This would start the webserver on port 12345 and reply to all requests with the 
+This would start the webserver on port 12345 and reply to all requests with the
 string `Hello World`.
+
+### webserver.stopServer()
+
+Stops a running server.
+
+Example:
+
+    var webserver = require('com.0x82.webserver');
+    var server = webserver.startServer({
+      ...
+    });
+
+    # Sometime later
+    webserver.stopServer();
 
 ### requestCallback
 
@@ -102,7 +118,7 @@ Example:
 Example:
 
     # curl -v http://localhost:12345/?foo=bar
-    
+
     requestCallback: function(e) {
       alert(e.get.foo); // should print "bar"
     }
@@ -200,7 +216,7 @@ Example:
         file: Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, "KS_nav_ui.png")
       }
     }
-    
+
 ## Properties
 
 ### webserver.disconnectsInBackground = true | false (default is true)

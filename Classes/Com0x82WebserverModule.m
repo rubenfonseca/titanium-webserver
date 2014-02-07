@@ -43,12 +43,12 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	// this method is called when the module is first loaded
 	// you *must* call the superclass
 	[super startup];
-	
+
 	NSLog(@"[INFO] %@ loaded",self);
-	
+
 	self.disconnectsInBackground = @(YES);
 	wasRunning = NO;
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillComeToForeground:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
@@ -58,7 +58,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	// this method is called when the module is being unloaded
 	// typically this is during shutdown. make sure you don't do too
 	// much processing here or the app will be quit forceably
-	
+
 	// you *must* call the superclass
 	[super shutdown:sender];
 }
@@ -66,12 +66,12 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 -(void)applicationWillResignActive:(id)notification {
 	NSLog(@"-----> applicationWillResignActive. disconnectsInBackground is %@", self.disconnectsInBackground);
 	if(![self.disconnectsInBackground boolValue]) return;
-	
+
 	if(httpServer.isRunning) {
 		__block UIBackgroundTaskIdentifier disconnectID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
 			[[UIApplication sharedApplication] endBackgroundTask:disconnectID];
 		}];
-		
+
 		wasRunning = YES;
 		[httpServer stop];
 	} else {
@@ -82,7 +82,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 -(void)applicationWillComeToForeground:(id)notification {
 	NSLog(@"-----> applicationWillComeToForeground. disconnectsInBackground is %@", self.disconnectsInBackground);
 	if(![self.disconnectsInBackground boolValue]) return;
-	
+
 	if(httpServer && wasRunning) {
 		NSError *error;
 		if(![httpServer start:&error]) {
@@ -91,7 +91,7 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 	}
 }
 
-#pragma mark Cleanup 
+#pragma mark Cleanup
 
 -(void)dealloc
 {
@@ -100,51 +100,61 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 #pragma Public APIs
 
+-(void)stopServer:(id)args {
+    if(httpServer && httpServer.isRunning) {
+        [httpServer stop];
+    }
+}
+
 -(id)startServer:(id)args
 {
   ENSURE_SINGLE_ARG(args,NSDictionary);
-	
+
 	NSUInteger port        = [TiUtils intValue:@"port" properties:args def:12345];
 	BOOL bonjourEnabled    = [TiUtils boolValue:@"bonjour" properties:args def:YES];
+    NSString *bonjourName  = [TiUtils stringValue:@"bonjourName" properties:args];
 	NSString *documentRoot = [TiUtils stringValue:@"documentRoot" properties:args def:NSTemporaryDirectory()];
-	
+
 	Com0x82WebserverCallbackProxy *proxy = [[Com0x82WebserverCallbackProxy alloc] _initWithPageContext:[self executionContext]];
 	[proxy _initWithProperties:args];
-    
+
 	// Configure our logging framework.
 	// To keep things simple and fast, we're just going to log to the Xcode console.
 	[DDLog addLogger:[DDTTYLogger sharedInstance]];
-	
+
 	// Create server using our custom MyHTTPServer class
 	httpServer = [[HTTPServer alloc] init];
 	proxy.server = httpServer;
-	
+
 	// Tell the server to broadcast its presence via Bonjour.
 	// This allows browsers such as Safari to automatically discover our service.
-	if(bonjourEnabled)
+	if(bonjourEnabled) {
+        if(bonjourName)
+            [httpServer setName:bonjourName];
 		[httpServer setType:@"_http._tcp."];
-	
+    }
+
 	// Normally there's no need to run our server on any specific port.
 	// Technologies like Bonjour allow clients to dynamically discover the server's port at runtime.
 	// However, for easy testing you may want force a certain port so you can just hit the refresh button.
 	[httpServer setPort:port];
-    
+
   DDLogVerbose(@"Server started on %@:%d", [proxy ipAddress:nil], httpServer.port);
-    
+
   // We're going to extend the base HTTPConnection class with our MyHTTPConnection class.
 	// This allows us to do all kinds of customizations.
 	[httpServer setConnectionClass:[MyHTTPConnection class]];
-	
+
 	// Serve files from our embedded Web folder
 	DDLogVerbose(@"Setting document root: %@", documentRoot);
 	[httpServer setDocumentRoot:documentRoot];
-	
+
 	// Start the server (and check for problems)
 	NSError *error;
 	if(![httpServer start:&error]) {
 		DDLogError(@"Error starting HTTP Server: %@", error);
 	}
-    
+
   return [proxy autorelease];
 }
 
