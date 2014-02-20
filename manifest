@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 0.12
+version: 0.13
 apiversion: 2
 description: Webserver
 author: Matt Apperson, Ruben Fonseca, Shannon Hicks
@@ -12,6 +12,6 @@ copyright: Copyright (c) 2012 by Ruben Fonseca
 # these should not be edited
 name: webserver
 moduleid: com.0x82.webserver
-guid: fa7f492c-cd23-4832-ae51-ef9eb7ad2b7
+guid: fa7f492c-cd23-4832-ae51-ef9eb7ad2b7a
 platform: iphone
 minsdk: 2.0.0

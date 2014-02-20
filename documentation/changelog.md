@@ -1,5 +1,13 @@
 # Changelog
 
+- 2014-02-20 Ruben Fonseca <fonseka@gmail.com>
+
+    * version 0.13 released
+
+    * stability improvements
+
+    * allowed max upload size of 100Mb
+
 - 2014-02-07 Ruben Fonseca <fonseka@gmail.com>
 
     * version 0.12 released

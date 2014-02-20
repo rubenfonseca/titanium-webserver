@@ -32,15 +32,16 @@ static Com0x82WebserverCallbackProxy* _instance;
   
   // Only remove the shared instance if we are the shared instance :)
 	if(self == _instance)
-    _instance = nil;
-	
-	[super dealloc];
+    RELEASE_TO_NIL(_instance);
+
+
+    [super dealloc];
 }
 
 -(void)_initWithProperties:(NSDictionary *)properties {
 	[super _initWithProperties:properties];
 	
-  _instance = self;
+  _instance = [self retain];
   requestCallback = [[properties objectForKey:@"requestCallback"] retain];
   errorCallback = [[properties objectForKey:@"errorCallback"] retain];
 }
