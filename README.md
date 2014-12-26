@@ -7,7 +7,7 @@ inside your application.
 
 ## Basic installation instructions
 
-Please follow the guid available [here](http://wiki.appcelerator.org/display/tis/Using+Titanium+Modules).
+Please follow the guide available [here](http://wiki.appcelerator.org/display/tis/Using+Titanium+Modules).
 
 ## Changelog
 
