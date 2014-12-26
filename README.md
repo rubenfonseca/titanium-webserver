@@ -25,6 +25,18 @@ To access this module from JavaScript, you would do the following:
 
 See [here](documentation/index.html).
 
-## Example
+## Usage
 
-See [here](example/app.js).
+Please see the examples/app.js for a full app example.
+
+## Author
+
+Ruben Fonseca, root (at) cpan (dot) org
+
+You can also find me on [github](http://github.com/rubenfonseca) and on my
+[blog](http://blog.0x82.com)
+
+## License
+
+This module is licensed under the MIT License. Please see the LICENSE file for
+details
