@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>CCBC9066-7DFD-4F35-B6B0-B5E6518B7FE6</string>
+	<key>IDESourceControlProjectName</key>
+	<string>webserver</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>4A01C82C-DF5D-4930-BAA0-4D584F13D2A6</key>
+		<string>ssh://bitbucket.org/mattapperson/webserver-module.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>webserver.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>4A01C82C-DF5D-4930-BAA0-4D584F13D2A6</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://bitbucket.org/mattapperson/webserver-module.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>4A01C82C-DF5D-4930-BAA0-4D584F13D2A6</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>4A01C82C-DF5D-4930-BAA0-4D584F13D2A6</string>
+			<key>IDESourceControlWCCName</key>
+			<string>webserver-module</string>
+		</dict>
+	</array>
+</dict>
+</plist>
