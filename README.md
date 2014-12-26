@@ -11,7 +11,7 @@ Please follow the guid available [here](http://wiki.appcelerator.org/display/tis
 
 ## Changelog
 
-See [here](documentation/changelog.html).
+See [here](documentation/changelog.md).
 
 ## Accessing the dropbox Module
 
@@ -23,7 +23,7 @@ To access this module from JavaScript, you would do the following:
 
 ## Documentation
 
-See [here](documentation/index.html).
+See [here](documentation/index.md).
 
 ## Usage
 
